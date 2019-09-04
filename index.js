@@ -15,7 +15,7 @@ const mongoClient = require('mongodb').MongoClient;
 module.exports = function(options) {
     var url = options.url || 'mongodb://localhost:27017/';
     var db = options.db || 'logs';
-    var collection = options.collection || 'httplogs';
+    var collection = options.collection || 'koalogs';
     return async function logger(ctx,next) {
         var err;
         try {
