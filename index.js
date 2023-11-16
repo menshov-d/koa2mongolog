@@ -1,7 +1,7 @@
 "use strict";
 
 const onFinished = require("on-finished");
-const mongoClient = require('mongodb').MongoClient;
+const {MongoClient} = require('mongodb');
 
 
 /**
@@ -13,18 +13,18 @@ const mongoClient = require('mongodb').MongoClient;
  * @param {String} options.collection mongodb log collection name
  */
 module.exports = function(options) {
-    var url = options.url || 'mongodb://localhost:27017/';
-    var db = options.db || 'logs';
-    var collection = options.collection || 'koalogs';
+    const url = options.url || 'mongodb://localhost:27017/';
+    const db = options.db || 'logs';
+    const collection = options.collection || 'koalogs';
     return async function logger(ctx,next) {
-        var err;
+        let err;
         try {
             await next();
         } catch (e) {
             err = e;
         } finally {
             onFinished(ctx.response,async () => {
-                var logObj = {
+                const logObj = {
                     url: ctx.request.href,
                     method: ctx.request.method,
                     status: ctx.status,
@@ -41,8 +41,9 @@ module.exports = function(options) {
                     let forwardedIp = forwardedIpsStr.split(',')[0];
                     logObj['remote_addr'] = forwardedIp;
                 }
-                var client = await mongoClient.connect(url,{ useNewUrlParser: true,useUnifiedTopology: true });
-                var dbo = await client.db(db);
+                const client = new MongoClient(url);
+                await client.connect();
+                const dbo = client.db(db);
                 await dbo.collection(collection).insertOne(logObj);
                 await client.close();
             });
