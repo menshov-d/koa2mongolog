@@ -1,0 +1,52 @@
+name: Publish to NPM
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 16
+        # https://github.com/actions/setup-node#caching-global-packages-data
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Get previous commit version
+      id: prev_version
+      run: echo "::set-output name=version::$(git show ${GITHUB_SHA}^:package.json | jq -r .version)"
+
+    - name: Get current commit version
+      id: current_version
+      run: echo "::set-output name=version::$(jq -r .version package.json)"
+
+    - name: Check for version change
+      run: |
+        if [ "${{ steps.prev_version.outputs.version }}" != "${{ steps.current_version.outputs.version }}" ]; then
+          echo "Package version has changed. Proceeding with build and publish."
+        else
+          echo "No changes to package version. Skipping build and publish."
+          exit 78
+        fi
+
+    - name: Build
+      run: npm run build
+
+    - name: Set up NPM authentication
+      run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+      env:
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+    - name: Publish to NPM
+      run: npm publish
