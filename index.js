@@ -1,9 +1,6 @@
 "use strict";
-
-const onFinished = require("on-finished");
+const {onFinished} = require("on-finished");
 const {MongoClient} = require('mongodb');
-
-
 /**
  * 
  * koa2 request/response logger function
