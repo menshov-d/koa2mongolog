@@ -40,8 +40,8 @@ jobs:
           exit 78
         fi
 
-    - name: Build
-      run: npm run build
+    #- name: Build
+    #  run: npm run build
 
     - name: Set up NPM authentication
       run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
