@@ -30,7 +30,6 @@ module.exports = function(options) {
                     user_agent: ctx.header['user-agent'],
                     event_time: new Date()
                 };
-
                 if (typeof ctx.header['remoteip'] != undefined) {
                     logObj['remote_addr'] = ctx.header['remoteip'];
                 } else if (ctx.get('X-Forwarded-For') != '') {
@@ -45,7 +44,6 @@ module.exports = function(options) {
                 await client.close();
             });
         }
-
         if (err) {
             throw err;
         }
