@@ -15,5 +15,8 @@
   "dependencies": {
     "mongodb": "^3.3.2",
     "on-finished": "^2.3.0"
-  } 
+  },
+  "files": [ 
+     "index.js","LICENSE","README.md" 
+  ] 
 }
